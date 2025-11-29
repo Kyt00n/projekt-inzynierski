@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Product>LTL Manager</Product>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <ProjectReference Include="..\LTL.Manager.Application\LTL.Manager.Application.csproj" />
+        <ProjectReference Include="..\LTL.Manager.WebApi\LTL.Manager.WebApi.csproj"/>
+      <ProjectReference Include="..\LTL.Manager.Infrastructure\LTL.Manager.Infrastructure.csproj" />
+      
+    </ItemGroup>
+  
+</Project>

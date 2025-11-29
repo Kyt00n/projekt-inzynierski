@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.1.3" />
+
+  <PropertyGroup>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <RootNamespace>LTL.Manager.WebApi</RootNamespace>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" />
+    <PackageReference Include="Serilog.AspNetCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LTL.Manager.Infrastructure\LTL.Manager.Infrastructure.csproj" />
+    <ProjectReference Include="..\LTL.Manager.Application\LTL.Manager.Application.csproj" />
+  </ItemGroup>
+
+</Project>

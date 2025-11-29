@@ -1,0 +1,13 @@
+/backend/LTL.Manager/logs/
+/backend/LTL.Manager/.idea/
+/backend/LTL.Manager/src/LTL.Manager/bin
+/backend/LTL.Manager/src/LTL.Manager/obj
+/backend/LTL.Manager/src/LTL.Manager.Application/bin
+/backend/LTL.Manager/src/LTL.Manager.Application/obj
+/backend/LTL.Manager/src/LTL.Manager.Domain/bin
+/backend/LTL.Manager/src/LTL.Manager.Domain/obj
+/backend/LTL.Manager/src/LTL.Manager.Infrastructure/bin
+/backend/LTL.Manager/src/LTL.Manager.Infrastructure/obj
+/backend/LTL.Manager/src/LTL.Manager.WebApi/bin
+/backend/LTL.Manager/src/LTL.Manager.WebApi/obj
+/backend/LTL.Manager/tests
