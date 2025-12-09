@@ -8,9 +8,4 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Requests\" />
-    <Folder Include="Responses\" />
-  </ItemGroup>
-
 </Project>

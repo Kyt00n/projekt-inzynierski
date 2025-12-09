@@ -1,6 +1,6 @@
 ﻿namespace LTL.Manager.Domain.Entities;
 
-public class User
+public abstract class User
 {
-  
+  public string Username {get; set;}
 }

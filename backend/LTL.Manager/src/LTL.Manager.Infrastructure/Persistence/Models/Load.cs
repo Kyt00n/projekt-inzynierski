@@ -1,4 +1,5 @@
-﻿using LTL.Manager.Domain.Enums;
+﻿#nullable enable
+using LTL.Manager.Domain.Enums;
 
 namespace LTL.Manager.Infrastructure.Persistence.Models;
 
@@ -10,4 +11,6 @@ public class Load : BaseEntity<int>
   public string PickupLocation { get; set; } = String.Empty;
   public string DeliveryLocation { get; set; } = String.Empty;
   public LoadStatus Status { get; set; }
+  public Guid? OrderId { get; set; }
+  public Order? Order { get; set; } = null;
 }

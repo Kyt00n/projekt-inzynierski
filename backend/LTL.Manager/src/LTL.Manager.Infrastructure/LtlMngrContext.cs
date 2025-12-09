@@ -6,6 +6,9 @@ namespace LTL.Manager.Infrastructure;
 public class LtlMngrContext : DbContext
 {
   internal DbSet<User> Users { get; set; }
+  internal DbSet<Order> Orders { get; set; }
+  internal DbSet<Trip> Trips { get; set; }
+  
   
   public LtlMngrContext(DbContextOptions<LtlMngrContext> options) : base(options)
   {
