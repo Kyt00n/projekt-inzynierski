@@ -1,0 +1,63 @@
+﻿using LTL.Manager.Application.Infrastructure;
+using LTL.Manager.Application.Interfaces;
+using LTL.Manager.Domain.Enums;
+using LTL.Manager.Domain.Requests.OrderRequests;
+using LTL.Manager.Domain.Responses.OrderResponse;
+
+namespace LTL.Manager.Application.Services;
+
+public class OrderService : IOrderService
+{
+  private readonly IOrderRepository _orderRepository;
+
+  public OrderService(IOrderRepository orderRepository)
+  {
+    _orderRepository = orderRepository;
+  }
+
+
+  public async Task<GetOrderResponse> CreateOrderAsync(CreateOrderRequest request)
+  {
+    return await _orderRepository.CreateOrderAsync(request);
+  }
+
+  public async Task<GetOrderResponse> GetOrderAsync(Guid id)
+  {
+    var order = await _orderRepository.GetOrderAsync(id);
+    if (order == null)
+    {
+      throw new InvalidOperationException("Order not found");
+    }
+    return order;
+  }
+
+  public async Task<bool> AssignDriverAsync(Guid id, Guid driverId)
+  {
+    var updateRequest = new UpdateOrderRequest() {OrderId = id, UserId = driverId, Status = OrderStatus.Assigned};
+    var result =  await _orderRepository.UpdateOrderAsync(updateRequest);
+    return result != null;
+  }
+
+  public async Task<bool> AcceptAssignmentAsync(Guid id)
+  {
+    var updateRequest = new UpdateOrderRequest() {OrderId = id, Status = OrderStatus.InProgress };
+    var result =  await _orderRepository.UpdateOrderAsync(updateRequest);
+    return result != null;
+  }
+
+  public async Task<bool> UpdateStatusAsync(Guid id, OrderStatus status)
+  {
+    var updateRequest = new UpdateOrderRequest() {OrderId = id, Status = status };
+    var result = await _orderRepository.UpdateOrderAsync(updateRequest);
+    return result != null;
+  }
+
+  public async Task<GetOrderResponse> UpdateOrderAsync(Guid id, UpdateOrderRequest request)
+  {
+    if (id != request.OrderId)
+    {
+      throw new ArgumentException("Order ID mismatch");
+    }
+    return await _orderRepository.UpdateOrderAsync(request);
+  }
+}

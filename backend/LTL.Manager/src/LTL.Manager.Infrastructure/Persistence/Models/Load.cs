@@ -8,9 +8,9 @@ public class Load : BaseEntity<int>
   public Guid LoadId { get; set; }
   public string Description { get; set; } = String.Empty;
   public double Weight { get; set; }
-  public string PickupLocation { get; set; } = String.Empty;
-  public string DeliveryLocation { get; set; } = String.Empty;
-  public LoadStatus Status { get; set; }
+  public double Length { get; set; }
+  public double Width { get; set; }
+  public double Height { get; set; }
   public Guid? OrderId { get; set; }
   public Order? Order { get; set; } = null;
 }

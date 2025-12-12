@@ -15,14 +15,14 @@ public class UserService : IUserService
   }
 
 
-  public Task<GetUserResponse> AddUserAsync(AddUserRequest user)
+  public async Task<GetUserResponse> AddUserAsync(AddUserRequest user)
   {
-    return _userRepository.AddUserAsync(user);
+    return await _userRepository.AddUserAsync(user);
   }
 
-  public Task<GetUserDetailsResponse> GetUserDetailsAsync(Guid userId)
+  public async Task<GetUserDetailsResponse> GetUserDetailsAsync(Guid userId)
   {
-    var user = _userRepository.GetUserDetailsAsync(userId);
+    var user = await _userRepository.GetUserDetailsAsync(userId);
     
     if (user == null)
     {
@@ -31,9 +31,9 @@ public class UserService : IUserService
     return user;
   }
 
-  public Task<GetUserResponse> UpdateUserAsync(UpdateUserRequest request)
+  public async Task<GetUserResponse> UpdateUserAsync(UpdateUserRequest request)
   {
-    return _userRepository.UpdateUserAsync(request);
+    return await _userRepository.UpdateUserAsync(request);
   }
 
   public Task ChangePasswordAsync(ChangePasswordRequest request)
@@ -41,8 +41,8 @@ public class UserService : IUserService
     return _userRepository.ChangePasswordAsync(request);
   }
 
-  public Task<IEnumerable<GetUserResponse>> GetAllUsersAsync()
+  public async Task<IEnumerable<GetUserResponse>> GetAllUsersAsync()
   {
-    return _userRepository.GetAllUsersAsync();
+    return await _userRepository.GetAllUsersAsync();
   }
 }

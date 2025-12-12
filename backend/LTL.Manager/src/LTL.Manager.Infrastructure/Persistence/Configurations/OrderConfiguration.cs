@@ -17,8 +17,22 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
     
     builder.Property(x => x.CreatedOn).ValueGeneratedOnAdd().HasDefaultValueSql("getdate()");
     builder.Property(x => x.LastUpdated).ValueGeneratedOnAddOrUpdate().HasDefaultValueSql("getdate()");
-    
+
+    builder.Property(x => x.DeliveryLocation).IsRequired().HasMaxLength(256);
+    builder.Property(x => x.PickupLocation).IsRequired().HasMaxLength(256);
     builder.HasAlternateKey(x => x.OrderId);
+    
+    builder.OwnsMany(x => x.Loads, lb =>
+    {
+      lb.HasKey(l => l.Id);
+      lb.Property(l => l.Id).ValueGeneratedOnAdd();
+      lb.Property(l => l.LoadId).IsRequired();
+      lb.Property(l => l.Description).HasMaxLength(512);
+      lb.Property(l => l.Weight).IsRequired();
+      lb.Property(l => l.Length).IsRequired();
+      lb.Property(l => l.Width).IsRequired();
+      lb.Property(l => l.Height).IsRequired();
+    });
     
     builder.HasOne(x=> x.Driver)
       .WithMany(u=> u.Orders)
