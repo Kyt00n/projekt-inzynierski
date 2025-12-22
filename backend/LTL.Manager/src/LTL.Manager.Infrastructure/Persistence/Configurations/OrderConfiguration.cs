@@ -12,7 +12,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
     builder.Property(x => x.Id).ValueGeneratedOnAdd();
     
     builder.Property(x => x.OrderId).IsRequired();
-    
+    builder.HasAlternateKey(x => x.OrderId);
     builder.Property(x => x.Status).IsRequired();
     
     builder.Property(x => x.CreatedOn).ValueGeneratedOnAdd().HasDefaultValueSql("getdate()");
@@ -20,19 +20,16 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
 
     builder.Property(x => x.DeliveryLocation).IsRequired().HasMaxLength(256);
     builder.Property(x => x.PickupLocation).IsRequired().HasMaxLength(256);
-    builder.HasAlternateKey(x => x.OrderId);
     
-    builder.OwnsMany(x => x.Loads, lb =>
-    {
-      lb.HasKey(l => l.Id);
-      lb.Property(l => l.Id).ValueGeneratedOnAdd();
-      lb.Property(l => l.LoadId).IsRequired();
-      lb.Property(l => l.Description).HasMaxLength(512);
-      lb.Property(l => l.Weight).IsRequired();
-      lb.Property(l => l.Length).IsRequired();
-      lb.Property(l => l.Width).IsRequired();
-      lb.Property(l => l.Height).IsRequired();
-    });
+    builder.HasMany(o => o.Loads)
+      .WithOne(l => l.Order)
+      .HasForeignKey(l => l.OrderId)
+      .OnDelete(DeleteBehavior.Cascade);
+    
+    builder.HasMany(o => o.Documents)
+      .WithOne(d => d.Order)
+      .HasForeignKey(d => d.OrderId)
+      .OnDelete(DeleteBehavior.Cascade);
     
     builder.HasOne(x=> x.Driver)
       .WithMany(u=> u.Orders)

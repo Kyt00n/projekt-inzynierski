@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using LTL.Manager.Application.Infrastructure;
+using LTL.Manager.Domain.Enums;
 using LTL.Manager.Domain.Requests.OrderRequests;
 using LTL.Manager.Domain.Responses.OrderResponse;
 using LTL.Manager.Infrastructure.Persistence.Models;
@@ -66,5 +67,21 @@ public class OrderRepository : IOrderRepository
     {
       return null;
     }
+  }
+
+  public async Task<ICollection<GetOrderResponse>> GetOrdersAsync(GetOrdersRequest request)
+  {
+    var query = _context.Orders.AsQueryable();
+
+    if (request.Status != null)
+    {
+      query = query.Where(o => o.Status == request.Status);
+    }
+    if (request.DriverId != null)
+    {
+      query = query.Where(o => o.UserId == request.DriverId);
+    }
+    var orders = await query.ToListAsync();
+    return _mapper.Map<ICollection<GetOrderResponse>>(orders);
   }
 }

@@ -60,4 +60,18 @@ public class OrderService : IOrderService
     }
     return await _orderRepository.UpdateOrderAsync(request);
   }
+
+  public Task<ICollection<GetOrderResponse>> GetActiveOrdersAsync()
+  {
+    var ordersRequest = new GetOrdersRequest() { Status = OrderStatus.Created };
+    var result =  _orderRepository.GetOrdersAsync(ordersRequest);
+    return result;
+  }
+
+  public Task<ICollection<GetOrderResponse>> GetUserOrdersAsync(Guid userId)
+  {
+    var ordersRequest = new GetOrdersRequest() { DriverId = userId };
+    var result =  _orderRepository.GetOrdersAsync(ordersRequest);
+    return result;
+  }
 }

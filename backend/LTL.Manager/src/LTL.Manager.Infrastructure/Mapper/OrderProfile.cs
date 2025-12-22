@@ -20,12 +20,12 @@ public class OrderProfile : Profile
           load.OrderId = dest.OrderId;
           load.Order = dest;
         }
-      });
+      }).ReverseMap();
     
     CreateMap<LTL.Manager.Domain.Entities.Load, Load>()
       .ForMember(d => d.LoadId, opt => opt.MapFrom(_ => Guid.NewGuid()))
       .ForMember(d => d.Id, opt => opt.Ignore())
-      .ForMember(d => d.OrderId, opt => opt.Ignore());
+      .ForMember(d => d.OrderId, opt => opt.Ignore()).ReverseMap();
   }
   
 }

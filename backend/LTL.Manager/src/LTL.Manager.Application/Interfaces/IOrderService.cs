@@ -13,4 +13,6 @@ public interface IOrderService
   Task<bool> UpdateStatusAsync(Guid id, OrderStatus status);
 
   Task<GetOrderResponse> UpdateOrderAsync(Guid id, UpdateOrderRequest status);
+  Task<ICollection<GetOrderResponse>> GetActiveOrdersAsync();
+  Task<ICollection<GetOrderResponse>> GetUserOrdersAsync(Guid userId);
 }

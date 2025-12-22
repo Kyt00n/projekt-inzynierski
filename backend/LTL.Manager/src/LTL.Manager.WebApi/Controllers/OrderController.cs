@@ -30,6 +30,20 @@ public class OrderController : ControllerBase
     return Ok(order);
   }
 
+  [HttpGet("active-orders")]
+  public async Task<IActionResult> GetActiveOrders()
+  {
+    var orders = await _orderService.GetActiveOrdersAsync();
+    return Ok(orders);
+  }
+
+  [HttpGet("{userId:guid}/orders")]
+  public async Task<IActionResult> GetUserOrders(Guid userId)
+  {
+    var orders = await _orderService.GetUserOrdersAsync(userId);
+    return Ok(orders);
+  }
+
   [HttpPut("{id:guid}/assign-driver")]
   public async Task<IActionResult> AssignDriver(Guid id, [FromBody] AssignDriverRequest request)
   {

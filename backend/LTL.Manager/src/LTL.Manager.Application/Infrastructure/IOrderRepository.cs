@@ -8,4 +8,5 @@ public interface IOrderRepository
   public Task<GetOrderResponse> CreateOrderAsync(CreateOrderRequest request);
   Task<GetOrderResponse> UpdateOrderAsync(UpdateOrderRequest request);
   Task<GetOrderResponse> GetOrderAsync(Guid id);
+  Task<ICollection<GetOrderResponse>> GetOrdersAsync(GetOrdersRequest request);
 }

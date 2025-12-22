@@ -1,4 +1,5 @@
-﻿using LTL.Manager.Infrastructure.Persistence.Models;
+﻿using LTL.Manager.Infrastructure.Persistence.Configurations;
+using LTL.Manager.Infrastructure.Persistence.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LTL.Manager.Infrastructure;
@@ -16,6 +17,9 @@ public class LtlMngrContext : DbContext
   public LtlMngrContext() {}
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
-    
+    modelBuilder.ApplyConfiguration(new UserConfiguration());
+    modelBuilder.ApplyConfiguration(new OrderConfiguration());
+    modelBuilder.ApplyConfiguration(new LoadConfiguration());
+    modelBuilder.ApplyConfiguration(new DocumentConfiguration());
   }
 }

@@ -1,4 +1,5 @@
-﻿using LTL.Manager.WebApi;
+﻿using LTL.Manager.Infrastructure;
+using LTL.Manager.WebApi;
 using Serilog;
 
 //const string serviceName = "LTL.Manager.API";
@@ -21,6 +22,7 @@ logger.Information("Starting web host");
 
 builder.Host.UseSerilog((_, config) => config.ReadFrom.Configuration(builder.Configuration));
 builder.Services.ConfigureWebApiServices();
+builder.Services.ConfigureInfrastructureServices(configuration);
 
 
 
