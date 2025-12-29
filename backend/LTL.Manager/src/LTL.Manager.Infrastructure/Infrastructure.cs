@@ -1,4 +1,12 @@
-﻿using LTL.Manager.Infrastructure.Configuration;
+﻿using System.Reflection;
+using AutoMapper;
+using LTL.Manager.Application.Infrastructure;
+using LTL.Manager.Application.Interfaces;
+using LTL.Manager.Infrastructure.Configuration;
+using LTL.Manager.Infrastructure.Mapper;
+using LTL.Manager.Infrastructure.Persistence.Repositories;
+using LTL.Manager.Infrastructure.Security;
+using Microsoft.EntityFrameworkCore.Diagnostics.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Validation;
@@ -14,5 +22,18 @@ public static class Infrastructure
     Requires.NotNull(infrastructureSettings, nameof(infrastructureSettings));
     services.AddMemoryCache();
     services.InitializeEntityFramework(infrastructureSettings.ConnectionString);
+    services.AddScoped<IUserRepository, UserRepository>();
+    services.AddScoped<IOrderRepository, OrderRepository>();
+    services.AddSingleton<IPasswordHasher, PasswordHasher>();
+    services.AddSingleton<ITokenProvider, TokenProvider>();
+    // var mapperConfig = new MapperConfiguration(mc =>
+    // {
+    //   mc.AddProfile(new OrderProfile());
+    //   mc.AddProfile(new OrderProfile());
+    // }, null);
+    // IMapper mapper = mapperConfig.CreateMapper();
+    // services.AddSingleton(mapper);
+    services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
   }
 }

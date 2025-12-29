@@ -21,6 +21,9 @@ public static class EntityFrameworkExtenstion
         }
       )
     );
+
+    services.AddSingleton<LtlMngrContextScopedFactory>();
+    services.AddScoped(sp => sp.GetRequiredService<LtlMngrContextScopedFactory>().CreateDbContext());
     return services;
   }
 

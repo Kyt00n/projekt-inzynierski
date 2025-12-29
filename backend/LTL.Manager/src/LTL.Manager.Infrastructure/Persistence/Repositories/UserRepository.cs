@@ -44,6 +44,17 @@ public class UserRepository : IUserRepository
     throw new NotImplementedException();
   }
 
+  public Task<GetUserDetailsResponse> GetUserDetailsAsync(string username)
+  {
+    throw new NotImplementedException();
+  }
+
+  public async Task<GetUserInternalResponse> GetUserInternalAsync(string email)
+  {
+    var user = await FindUserByEmailAsync(email);
+    return _mapper.Map<GetUserInternalResponse>(user);
+  }
+
   public Task<GetUserResponse> UpdateUserAsync(UpdateUserRequest request)
   {
     throw new NotImplementedException();
@@ -74,6 +85,11 @@ public class UserRepository : IUserRepository
     {
       throw new InvalidOperationException("User not found");
     }
+    return user;
+  }
+  private async Task<User> FindUserByEmailAsync(string email)
+  {
+    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
     return user;
   }
 

@@ -36,6 +36,20 @@ public class UserController(ILogger<UserController> logger, IUserService userSer
       return Conflict(new { message = ex.Message });
     }
   }
+  [HttpPost("login")]
+  public async Task<ActionResult> LoginUser(LoginUserRequest request)
+  {
+    try
+    {
+      var result = await userService.LoginUserAsync(request);
+      return Ok(result);
+    }
+    catch (InvalidOperationException ex)
+    {
+      _logger.LogWarning(ex.Message);
+      return Unauthorized(new { message = ex.Message });
+    }
+  }
   
   [HttpGet("me")]
   [Authorize]
@@ -85,7 +99,7 @@ public class UserController(ILogger<UserController> logger, IUserService userSer
   }
   
   [HttpGet("/api/users")]
-  [Authorize(Roles = "Admin")]
+  [Authorize]
   public async Task<ActionResult> GetUsers()
   {
     var users = await userService.GetAllUsersAsync();

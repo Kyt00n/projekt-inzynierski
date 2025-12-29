@@ -8,15 +8,21 @@ namespace LTL.Manager.Application.Services;
 public class UserService : IUserService
 {
   private readonly IUserRepository _userRepository;
+  private readonly IPasswordHasher _passwordHasher;
+  private readonly ITokenProvider _tokenProvider;
 
-  public UserService(IUserRepository userRepository)
+  public UserService(IUserRepository userRepository, IPasswordHasher passwordHasher, ITokenProvider tokenProvider)
   {
     _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+    _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
+    _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
   }
 
 
   public async Task<GetUserResponse> AddUserAsync(AddUserRequest user)
   {
+    var passwordHash = _passwordHasher.Hash(user.Password);
+    user.PasswordHash = passwordHash;
     return await _userRepository.AddUserAsync(user);
   }
 
@@ -44,5 +50,33 @@ public class UserService : IUserService
   public async Task<IEnumerable<GetUserResponse>> GetAllUsersAsync()
   {
     return await _userRepository.GetAllUsersAsync();
+  }
+
+  public async Task<GetLoginResponse> LoginUserAsync(LoginUserRequest request)
+  {
+    try
+    {
+      var user = await _userRepository.GetUserInternalAsync(request.Email);
+      if (!user.IsActive)
+      {
+        throw new InvalidOperationException("User account is not active");
+      }
+      var isPasswordValid = _passwordHasher.Verify(request.Password, user.PasswordHash);
+      
+      if (!isPasswordValid)
+      {
+        throw new InvalidOperationException("Invalid email or password");
+      }
+      var token = _tokenProvider.Create(user);
+      return new GetLoginResponse()
+      {
+        Token = token
+      };
+    }
+    catch (InvalidOperationException)
+    {
+      throw new InvalidOperationException("Invalid email or password");
+    }
+    
   }
 }

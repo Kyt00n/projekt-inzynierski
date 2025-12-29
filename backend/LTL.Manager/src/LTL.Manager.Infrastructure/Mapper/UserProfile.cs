@@ -15,5 +15,6 @@ public class UserProfile : Profile
       .ForMember(dest => dest.Status, opt => opt.MapFrom(src => Domain.Enums.DriverStatus.Offline))
       .ReverseMap();
     CreateMap<GetUserResponse, User>().ReverseMap();
+    CreateMap<GetUserInternalResponse, User>().ReverseMap();
   }
 }
