@@ -26,7 +26,7 @@ builder.Services.ConfigureWebApiServices(configuration);
 builder.Services.ConfigureInfrastructureServices(configuration);
 builder.Services.ConfigureApplicationServices();
 
-
+builder.WebHost.UseUrls("http://192.168.100.11:5000");
 var app = builder.Build();
 
 app.UseRouting();
