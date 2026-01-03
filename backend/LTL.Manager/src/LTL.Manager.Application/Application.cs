@@ -11,6 +11,6 @@ public static class Application
   {
     services.AddScoped<IUserService, UserService>();
     services.AddScoped<IOrderService, OrderService>();
-    
+    services.AddScoped<ITripService, TripService>();
   }
 }

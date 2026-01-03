@@ -3,8 +3,9 @@ import React, { useEffect, useState } from 'react'
 import { useLocalSearchParams } from 'expo-router'
 import { Image, ScrollView as HorizontalScrollView } from 'react-native'
 import { Load } from '@/interfaces/Load'
-import { getOrder } from '@/services/api'
+import { assignDriver, getOrder } from '@/services/api'
 import { Order } from '@/interfaces/Order'
+import { useAuth } from '../authProvider'
 
 const OrderDetails = () => {
   const { id } = useLocalSearchParams()
@@ -12,6 +13,7 @@ const OrderDetails = () => {
   const [order, setOrder] = useState<Order | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const {authState} = useAuth();
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -30,8 +32,8 @@ const OrderDetails = () => {
     }
   }, [id])
 
-  const totalLoads = order?.totalLoads ?? (order?.loads ? order.loads.length : 0)
-  const totalWeight = order?.totalWeight ?? (order?.loads
+  const totalLoads = (order?.loads ? order.loads.length : 0)
+  const totalWeight = (order?.loads
     ? order.loads.reduce((sum: number, load: Load) => sum + (load.weight ?? 0), 0)
     : 0)
 
@@ -53,10 +55,10 @@ const OrderDetails = () => {
 
   return (
     <View className="bg-primary flex-1">
-      <ScrollView contentContainerStyle={{ paddingBottom: 120, paddingHorizontal: 20 }}>
+      <ScrollView contentContainerStyle={{ paddingTop: 32, paddingBottom: 160, paddingHorizontal: 20 }}>
         <View className="mt-5">
           <Text className="text-white font-bold text-xl" numberOfLines={2}>
-            Order nr.: {order?.id}
+            Order nr.: {order?.orderId}
           </Text>
         </View>
 
@@ -102,11 +104,18 @@ const OrderDetails = () => {
         )}
       </ScrollView>
 
-      <View className="absolute bottom-5 w-full px-5">
+      <View className="absolute bottom-12 w-full px-5">
         <TouchableOpacity
           className="bg-blue-600 rounded-xl py-3 items-center"
-          onPress={() => {
-            // TODO: hook up apply action
+          onPress={async () => {
+            try{
+              setLoading(true)
+              await assignDriver(order?.orderId as string, authState?.userId as string)
+            } catch (err) {
+              setError(err instanceof Error ? err.message : 'Failed to assign driver')
+            } finally {
+              setLoading(false)
+            }
           }}
         >
           <Text className="text-white font-semibold text-base">Apply</Text>

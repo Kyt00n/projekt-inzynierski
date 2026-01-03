@@ -3,4 +3,6 @@
 public class GetUserInternalResponse: GetUserDetailsResponse
 {
   public string PasswordHash { get; set; }
+  
+  public bool IsAdmin { get; set; }
 }

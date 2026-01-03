@@ -24,6 +24,7 @@ public static class Infrastructure
     services.InitializeEntityFramework(infrastructureSettings.ConnectionString);
     services.AddScoped<IUserRepository, UserRepository>();
     services.AddScoped<IOrderRepository, OrderRepository>();
+    services.AddScoped<ITripRepository, TripRepository>();
     services.AddSingleton<IPasswordHasher, PasswordHasher>();
     services.AddSingleton<ITokenProvider, TokenProvider>();
     // var mapperConfig = new MapperConfiguration(mc =>

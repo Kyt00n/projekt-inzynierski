@@ -181,13 +181,22 @@ namespace LTL.Manager.Infrastructure.Persistence.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<string>("DeliveryLocation")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("LastUpdated")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
 
                     b.Property<DateTime?>("StartTime")
                         .HasColumnType("datetime2");
@@ -196,6 +205,9 @@ namespace LTL.Manager.Infrastructure.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.Property<Guid>("TripId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -222,6 +234,9 @@ namespace LTL.Manager.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsAdmin")
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("LastUpdated")

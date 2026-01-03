@@ -39,9 +39,14 @@ public class UserRepository : IUserRepository
 
   }
 
-  public Task<GetUserDetailsResponse> GetUserDetailsAsync(Guid userId)
+  public async Task<GetUserDetailsResponse> GetUserDetailsAsync(Guid userId)
   {
-    throw new NotImplementedException();
+    var user = await FindUserByIdAsync(userId);
+    if (user == null)
+    {
+      throw new InvalidOperationException("User not found");
+    }
+    return _mapper.Map<GetUserDetailsResponse>(user);
   }
 
   public Task<GetUserDetailsResponse> GetUserDetailsAsync(string username)
@@ -55,9 +60,22 @@ public class UserRepository : IUserRepository
     return _mapper.Map<GetUserInternalResponse>(user);
   }
 
-  public Task<GetUserResponse> UpdateUserAsync(UpdateUserRequest request)
+  public async Task<GetUserResponse> UpdateUserAsync(UpdateUserRequest request)
   {
-    throw new NotImplementedException();
+    try
+    {
+      var user = await FindUserByIdAsync(request.UserId);
+      _mapper.Map(request, user);
+      await _context.SaveChangesAsync();
+      return _mapper.Map<GetUserResponse>(user);
+    }catch (InvalidOperationException )
+    {
+      throw new InvalidOperationException("Cannot change password. User not found");
+    }
+    catch (DbUpdateException )
+    {
+      throw new InvalidOperationException("Cannot update user due to database error");
+    }
   }
 
   public async Task ChangePasswordAsync(ChangePasswordRequest request)
@@ -93,9 +111,18 @@ public class UserRepository : IUserRepository
     return user;
   }
 
-  public Task<IEnumerable<GetUserResponse>> GetAllUsersAsync()
+  public Task<IEnumerable<GetUserResponse>> GetAllUsersAsync(GetUsersRequest request)
   {
     var list = _context.Users.OrderBy(u => u.Username).AsNoTracking();
+
+    if (request.Status != null)
+    {
+      list = list.Where(u => u.Status == request.Status);
+    }
+    if (request.IsActive != null)
+    {
+      list = list.Where(u => u.IsActive == request.IsActive);
+    }
     return list.ProjectTo<GetUserResponse>(_mapper.ConfigurationProvider)
       .ToListAsync()
       .ContinueWith(t => (IEnumerable<GetUserResponse>)t.Result);

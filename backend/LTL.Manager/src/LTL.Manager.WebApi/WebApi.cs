@@ -21,7 +21,6 @@ public static class WebApi
    {
      options.SwaggerDoc("v1", new OpenApiInfo { Title = "LTL.Manager API", Version = "v1" });
 
-     // JWT Bearer configuration for Swagger UI
      var bearerScheme = new OpenApiSecurityScheme
      {
        Name = "Authorization",
@@ -56,9 +55,9 @@ public static class WebApi
        if (File.Exists(xmlPath))
          options.IncludeXmlComments(xmlPath);
      }
-     catch
+     catch (Exception ex)
      {
-       // ignore if xml comments cannot be resolved at design time
+        Console.WriteLine($"Could not include XML comments: {ex.Message}");
      }
    });
    services.AddAuthorization();
@@ -74,6 +73,5 @@ public static class WebApi
          ClockSkew = TimeSpan.Zero,
        };
      });
-   //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
  }
 }

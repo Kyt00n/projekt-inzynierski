@@ -2,6 +2,7 @@
 using LTL.Manager.Application.Interfaces;
 using LTL.Manager.Application.Services;
 using LTL.Manager.Domain.Requests.UserRequests;
+using LTL.Manager.Domain.Responses.UserResponses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -99,11 +100,23 @@ public class UserController(ILogger<UserController> logger, IUserService userSer
   }
   
   [HttpGet("/api/users")]
-  [Authorize]
-  public async Task<ActionResult> GetUsers()
+  [Authorize(Roles = "Admin")]
+  public async Task<ActionResult> GetUsers([FromQuery] GetUsersRequest request)
   {
-    var users = await userService.GetAllUsersAsync();
+    var users = await userService.GetAllUsersAsync(request);
     return Ok(users);
+  }
+  
+  [HttpPut("/api/users/{id:guid}/activate")]
+  [Authorize(Roles = "Admin")]
+  public async Task<ActionResult> ActivateUser(Guid id)
+  {
+    var user = await userService.GetUserDetailsAsync(id);
+    if (user == null) return NotFound();
+    if (user.IsActive) return BadRequest(new { message = "User is already active" });
+    var request = new UpdateUserRequest() { UserId = id, IsActive = true };
+    var success = await userService.UpdateUserAsync(request);
+    return Ok(success);
   }
 
   [HttpGet("{id:guid}")]
@@ -113,7 +126,6 @@ public class UserController(ILogger<UserController> logger, IUserService userSer
     var user = await userService.GetUserDetailsAsync(id);
     return user == null ? NotFound() : Ok(user);
   }
-  
 
   private Guid? GetCurrentUserId()
   {

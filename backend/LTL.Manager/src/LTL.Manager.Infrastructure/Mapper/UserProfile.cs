@@ -16,5 +16,8 @@ public class UserProfile : Profile
       .ReverseMap();
     CreateMap<GetUserResponse, User>().ReverseMap();
     CreateMap<GetUserInternalResponse, User>().ReverseMap();
+    CreateMap<UpdateUserRequest, User>()
+      .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+    CreateMap<GetUserDetailsResponse, User>().ReverseMap();
   }
 }

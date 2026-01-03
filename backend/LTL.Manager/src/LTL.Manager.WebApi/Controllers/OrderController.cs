@@ -9,10 +9,12 @@ namespace LTL.Manager.WebApi.Controllers;
 public class OrderController : ControllerBase
 {
   private readonly IOrderService _orderService;
+  private readonly ITripService _tripService;
 
-  public OrderController(IOrderService orderService)
+  public OrderController(IOrderService orderService, ITripService tripService)
   {
     _orderService = orderService;
+    _tripService = tripService;
   }
 
   [HttpPost]
@@ -55,9 +57,15 @@ public class OrderController : ControllerBase
   [HttpPut("{id:guid}/accept")]
   public async Task<IActionResult> AcceptAssignment(Guid id)
   {
-    var success = await _orderService.AcceptAssignmentAsync(id);
-    if (!success) return BadRequest();
-    return NoContent();
+    try
+    {
+      var order = await _orderService.AcceptAssignmentAsync(id);
+      var trip = await _tripService.AssignTripAsync(order);
+      return Ok(trip);
+    }catch (InvalidOperationException ex)
+    {
+      return BadRequest(ex.Message);
+    }
   }
 
   [HttpPut("{id:guid}/status")]

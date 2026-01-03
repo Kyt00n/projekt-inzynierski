@@ -47,9 +47,9 @@ public class UserService : IUserService
     return _userRepository.ChangePasswordAsync(request);
   }
 
-  public async Task<IEnumerable<GetUserResponse>> GetAllUsersAsync()
+  public async Task<IEnumerable<GetUserResponse>> GetAllUsersAsync(GetUsersRequest request)
   {
-    return await _userRepository.GetAllUsersAsync();
+    return await _userRepository.GetAllUsersAsync(request);
   }
 
   public async Task<GetLoginResponse> LoginUserAsync(LoginUserRequest request)

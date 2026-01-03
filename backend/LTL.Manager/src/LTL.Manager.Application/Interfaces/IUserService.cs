@@ -11,6 +11,6 @@ public interface IUserService
   Task<GetUserDetailsResponse> GetUserDetailsAsync(Guid userId);
   Task<GetUserResponse> UpdateUserAsync(UpdateUserRequest request);
   Task ChangePasswordAsync(ChangePasswordRequest request);
-  Task<IEnumerable<GetUserResponse>> GetAllUsersAsync();
+  Task<IEnumerable<GetUserResponse>> GetAllUsersAsync(GetUsersRequest request);
   Task<GetLoginResponse> LoginUserAsync(LoginUserRequest request);
 }

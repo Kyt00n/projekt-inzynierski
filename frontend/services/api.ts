@@ -1,3 +1,7 @@
+import { Load } from '@/interfaces/Load';
+import { Order } from '@/interfaces/Order';
+import * as SecureStore from 'expo-secure-store';
+
 export const API = {
     BASE_URL: 'http://192.168.100.11:5000/api',
     headers: {
@@ -5,12 +9,18 @@ export const API = {
         Accept: 'application/json',
     }
 }
+const getAuthHeaders = async () => {
+    const token = await SecureStore.getItemAsync('authToken')
+    return { Authorization: `Bearer ${token}` }
+}
 
 export const getOrder = async (id: string) => {
     const endpoint = `${API.BASE_URL}/Order/${id}`
+    const authHeaders = await getAuthHeaders()
     const res = await fetch(endpoint, {
         method: 'GET',
-        headers: API.headers,
+        headers: {...API.headers, ...authHeaders
+        },
     })
     if (!res.ok) {
         throw new Error('Network response was not ok')
@@ -18,11 +28,12 @@ export const getOrder = async (id: string) => {
     return await res.json()
 }
 
-export const getActiveOrders = async () => {
+export const getActiveOrders = async (): Promise<Order[]> => {
     const endpoint = `${API.BASE_URL}/Order/active-orders`
+    const authHeaders = await getAuthHeaders()
     const res = await fetch(endpoint, {
         method: 'GET',
-        headers: API.headers,
+        headers: {...API.headers, ...authHeaders},
     })
     if (!res.ok) {
         throw new Error('Network response was not ok')

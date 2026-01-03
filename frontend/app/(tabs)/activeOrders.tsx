@@ -37,10 +37,12 @@ export default function ActiveOrders() {
         ) : (
           <FlatList
             data={orders ?? []}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.orderId}
             renderItem={renderItem}
             contentContainerStyle={{ paddingBottom: 32, paddingTop: 20 }}
             showsVerticalScrollIndicator={false}
+            refreshing={loading}
+            onRefresh={refetch}
             ListEmptyComponent={
               <Text className="text-gray-400 text-center mt-10">No active orders</Text>
             }

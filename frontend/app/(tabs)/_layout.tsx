@@ -64,6 +64,11 @@ const _Layout = () => {
             headerShown: false,
             tabBarIcon: ({ focused }) => <TabIcon icon="👤" title="Profile" focused={focused} />,
              }} />
+        <Tabs.Screen name="activeOrders" options={{ 
+            title: 'Active Orders',
+            headerShown: false,
+            tabBarIcon: ({ focused }) => <TabIcon icon="🚚" title="Orders" focused={focused} />,
+             }} />
     </Tabs>
   )
 }

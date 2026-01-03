@@ -19,12 +19,12 @@ public class OrderRepository : IOrderRepository
     _mapper = mapper;
   }
 
-  public Task<GetOrderResponse> CreateOrderAsync(CreateOrderRequest request)
+  public async Task<GetOrderResponse> CreateOrderAsync(CreateOrderRequest request)
   {
     var orderDb = _mapper.Map<Order>(request);
     var mappedOrder = _context.Orders.Add(orderDb);
-    _context.SaveChanges();
-    return Task.FromResult(_mapper.Map<GetOrderResponse>(mappedOrder.Entity));
+    await _context.SaveChangesAsync();
+    return _mapper.Map<GetOrderResponse>(mappedOrder.Entity);
   }
 
   public async Task<GetOrderResponse> UpdateOrderAsync(UpdateOrderRequest request)
@@ -48,7 +48,9 @@ public class OrderRepository : IOrderRepository
   
   private async Task<Order> FindOrderByIdAsync(Guid id)
   {
-    var order = await _context.Orders.FindAsync(id);
+    var order = await _context.Orders
+      .Include(o=> o.Loads)
+      .SingleOrDefaultAsync(o => o.OrderId == id);
     if (order == null)
     {
       throw new InvalidOperationException("Order not found");
@@ -60,8 +62,8 @@ public class OrderRepository : IOrderRepository
   {
     try
     {
-      var order = FindOrderByIdAsync(id);
-      return _mapper.Map<GetOrderResponse>(await order);
+      var order = await FindOrderByIdAsync(id);
+      return _mapper.Map<GetOrderResponse>(order);
     }
     catch (InvalidOperationException)
     {
@@ -71,7 +73,9 @@ public class OrderRepository : IOrderRepository
 
   public async Task<ICollection<GetOrderResponse>> GetOrdersAsync(GetOrdersRequest request)
   {
-    var query = _context.Orders.AsQueryable();
+    var query = _context.Orders
+      .Include(o => o.Loads)
+      .AsQueryable();
 
     if (request.Status != null)
     {

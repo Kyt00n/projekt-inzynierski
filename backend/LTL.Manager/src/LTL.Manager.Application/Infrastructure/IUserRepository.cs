@@ -10,5 +10,5 @@ public interface IUserRepository
   Task<GetUserInternalResponse> GetUserInternalAsync(string email);
   Task<GetUserResponse> UpdateUserAsync(UpdateUserRequest request);
   Task ChangePasswordAsync(ChangePasswordRequest request);
-  Task<IEnumerable<GetUserResponse>> GetAllUsersAsync();
+  Task<IEnumerable<GetUserResponse>> GetAllUsersAsync(GetUsersRequest request);
 }

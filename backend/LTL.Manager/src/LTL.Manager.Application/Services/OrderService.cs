@@ -38,12 +38,17 @@ public class OrderService : IOrderService
     return result != null;
   }
 
-  public async Task<bool> AcceptAssignmentAsync(Guid id)
+  public async Task<AcceptAssignmentOrderResponse> AcceptAssignmentAsync(Guid id)
   {
-    var updateRequest = new UpdateOrderRequest() {OrderId = id, Status = OrderStatus.InProgress };
-    var result =  await _orderRepository.UpdateOrderAsync(updateRequest);
-    return result != null;
-  }
+    var updateRequest = new UpdateOrderRequest() { OrderId = id, Status = OrderStatus.InProgress };
+    var result = await _orderRepository.UpdateOrderAsync(updateRequest);
+    return new AcceptAssignmentOrderResponse()
+    {
+      OrderId = result.OrderId,
+      UserId = result.UserId ?? Guid.Empty,
+      DeliveryLocation = result.DeliveryLocation
+    };
+}
 
   public async Task<bool> UpdateStatusAsync(Guid id, OrderStatus status)
   {

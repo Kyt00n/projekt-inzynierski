@@ -11,6 +11,7 @@ public class User : BaseEntity<int>
   public string Email { get; init; } = String.Empty;
   public string PasswordHash { get; init; } = String.Empty;
   public bool IsActive { get; init; }
+  public bool IsAdmin { get; init; }
   
   public ICollection<Order> Orders { get; set; }
   public DriverStatus Status { get; set; }
