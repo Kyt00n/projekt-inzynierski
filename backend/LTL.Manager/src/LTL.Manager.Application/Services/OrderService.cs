@@ -1,6 +1,7 @@
 ﻿using LTL.Manager.Application.Infrastructure;
 using LTL.Manager.Application.Interfaces;
 using LTL.Manager.Domain.Enums;
+using LTL.Manager.Domain.Requests.DocumentRequests;
 using LTL.Manager.Domain.Requests.OrderRequests;
 using LTL.Manager.Domain.Responses.OrderResponse;
 
@@ -78,5 +79,17 @@ public class OrderService : IOrderService
     var ordersRequest = new GetOrdersRequest() { DriverId = userId };
     var result =  _orderRepository.GetOrdersAsync(ordersRequest);
     return result;
+  }
+
+  public Task<GetOrderResponse> AddDriverNoteAsync(Guid orderId, AddDriverNoteRequest request)
+  {
+    request.OrderId = orderId;
+    return _orderRepository.AddDriverNoteAsync(request);
+  }
+
+  public Task<GetOrderResponse> AddOrderDocumentAsync(Guid id, CreateDocumentRequest docRequest)
+  {
+    docRequest.OrderId = id;
+    return _orderRepository.AddOrderDocumentAsync(docRequest);
   }
 }

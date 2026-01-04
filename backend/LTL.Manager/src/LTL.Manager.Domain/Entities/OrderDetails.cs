@@ -7,5 +7,6 @@ public class OrderDetails : Order
   public Guid OrderId { get; set; }
   public OrderStatus Status { get; set; }
   public Guid? UserId { get; set; }
-  public string DriverNotes { get; set; }
+  public Guid? TripId { get; set; }
+  public ICollection<DriverNote> DriverNotes { get; set; }
 }

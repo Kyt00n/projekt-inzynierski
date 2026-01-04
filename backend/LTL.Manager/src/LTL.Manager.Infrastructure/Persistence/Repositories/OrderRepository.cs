@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using LTL.Manager.Application.Infrastructure;
 using LTL.Manager.Domain.Enums;
+using LTL.Manager.Domain.Requests.DocumentRequests;
 using LTL.Manager.Domain.Requests.OrderRequests;
 using LTL.Manager.Domain.Responses.OrderResponse;
 using LTL.Manager.Infrastructure.Persistence.Models;
@@ -50,6 +51,8 @@ public class OrderRepository : IOrderRepository
   {
     var order = await _context.Orders
       .Include(o=> o.Loads)
+      .Include(o=> o.DriverNotes)
+      .Include(o=> o.Documents)
       .SingleOrDefaultAsync(o => o.OrderId == id);
     if (order == null)
     {
@@ -87,5 +90,24 @@ public class OrderRepository : IOrderRepository
     }
     var orders = await query.ToListAsync();
     return _mapper.Map<ICollection<GetOrderResponse>>(orders);
+  }
+
+  public async Task<GetOrderResponse> AddDriverNoteAsync(AddDriverNoteRequest request)
+  {
+    var order = await FindOrderByIdAsync(request.OrderId);
+    var driversNoteDb = _mapper.Map<DriverNote>(request);
+    order.DriverNotes.Add(driversNoteDb);
+
+    await _context.SaveChangesAsync();
+    return _mapper.Map<GetOrderResponse>(order);
+  }
+
+  public async Task<GetOrderResponse> AddOrderDocumentAsync(CreateDocumentRequest docRequest)
+  {
+    var order = await FindOrderByIdAsync(docRequest.OrderId);
+    var documentDb = _mapper.Map<Document>(docRequest);
+    order.Documents.Add(documentDb);
+    await _context.SaveChangesAsync();
+    return _mapper.Map<GetOrderResponse>(order);
   }
 }

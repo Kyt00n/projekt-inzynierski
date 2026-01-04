@@ -1,4 +1,5 @@
 ﻿using LTL.Manager.Domain.Enums;
+using LTL.Manager.Domain.Requests.DocumentRequests;
 using LTL.Manager.Domain.Requests.OrderRequests;
 using LTL.Manager.Domain.Responses.OrderResponse;
 
@@ -15,4 +16,6 @@ public interface IOrderService
   Task<GetOrderResponse> UpdateOrderAsync(Guid id, UpdateOrderRequest status);
   Task<ICollection<GetOrderResponse>> GetActiveOrdersAsync();
   Task<ICollection<GetOrderResponse>> GetUserOrdersAsync(Guid userId);
+  Task<GetOrderResponse> AddDriverNoteAsync(Guid id, AddDriverNoteRequest request);
+  Task<GetOrderResponse> AddOrderDocumentAsync(Guid id, CreateDocumentRequest docRequest);
 }

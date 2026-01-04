@@ -13,8 +13,8 @@ public class TripProfile : Profile
     CreateMap<AcceptAssignmentOrderResponse, Trip>()
       .ForMember(dest => dest.TripId, opt => opt.MapFrom(_ => Guid.NewGuid()))
       .ForMember(dest => dest.StartTime, opt => opt.MapFrom(_ => DateTime.Now))
-      .ForMember(dest => dest.Status, opt => opt.MapFrom(_ => TripStatus.InProgress))
-      .ForMember(dest => dest.Orders, opt => opt.Ignore()).ReverseMap();
+      .ForMember(dest => dest.Status, opt => opt.MapFrom(_ => TripStatus.Planned))
+      .ForMember(dest => dest.Orders, opt => opt.MapFrom(_ => new List<Order>())).ReverseMap();
 
     CreateMap<Trip, AssignTripResponse>();
     

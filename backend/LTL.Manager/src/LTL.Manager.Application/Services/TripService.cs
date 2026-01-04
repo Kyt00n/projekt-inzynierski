@@ -28,4 +28,24 @@ public class TripService : ITripService
     }
     return await _tripRepository.CreateTripAndAssignOrder(request);
   }
+
+  public async Task<GetTripStatusResponse> CheckTripStatusAsync(Guid id)
+  {
+    return await _tripRepository.GetTripStatusAsync(id);
+  }
+
+  public async Task CheckTripForCompletionAsync(Guid id)
+  {
+    await _tripRepository.CheckTripForCompletionAsync(id);
+  }
+
+  public async Task<bool> StartTripAsync(Guid id)
+  {
+    return await _tripRepository.StartTripAsync(id);
+  }
+
+  public async Task<bool> CompleteTripAsync(Guid id)
+  {
+    return await _tripRepository.CompleteTripAsync(id);
+  }
 }

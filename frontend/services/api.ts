@@ -42,9 +42,10 @@ export const getActiveOrders = async (): Promise<Order[]> => {
 }
 export const getUserOrders = async (userId: string) => {
     const endpoint = `${API.BASE_URL}/Order/${userId}/orders`
+    const authHeaders = await getAuthHeaders()
     const res = await fetch(endpoint, {
         method: 'GET',
-        headers: API.headers,
+        headers: {...API.headers, ...authHeaders},
     })
     if (!res.ok) {
         throw new Error('Network response was not ok')
@@ -53,9 +54,10 @@ export const getUserOrders = async (userId: string) => {
 }
 export const assignDriver = async (orderId: string, driverId: string) => {
     const endpoint = `${API.BASE_URL}/Order/${orderId}/assign-driver`
+    const authHeaders = await getAuthHeaders()
     const res = await fetch(endpoint, {
         method: 'PUT',
-        headers: API.headers,
+        headers: {...API.headers, ...authHeaders},
         body: JSON.stringify({ driverId }),
     })
     if (!res.ok) {
@@ -65,9 +67,10 @@ export const assignDriver = async (orderId: string, driverId: string) => {
 }
 export const updateOrderStatus = async (orderId: string, status: string) => {
     const endpoint = `${API.BASE_URL}/Order/${orderId}/status`
+    const authHeaders = await getAuthHeaders()
     const res = await fetch(endpoint, {
         method: 'PUT',
-        headers: API.headers,
+        headers: {...API.headers, ...authHeaders},
         body: JSON.stringify({ status }),
     })
     if (!res.ok) {
@@ -78,9 +81,10 @@ export const updateOrderStatus = async (orderId: string, status: string) => {
 
 export const updateOrder = async (orderId: string, payload: object) => {
     const endpoint = `${API.BASE_URL}/Order/${orderId}`
+    const authHeaders = await getAuthHeaders()
     const res = await fetch(endpoint, {
         method: 'PUT',
-        headers: API.headers,
+        headers: {...API.headers, ...authHeaders},
         body: JSON.stringify(payload),
     })
     if (!res.ok) {
@@ -126,6 +130,50 @@ export const loginUser = async (email: string, password: string) => {
     }
     return await res.json()
 }
+
+export const checkTripStatus = async (tripId: string) => {
+    const endpoint = `${API.BASE_URL}/trip/${tripId}/check-status`
+    const authHeaders = await getAuthHeaders()
+    const res = await fetch(endpoint, {
+        method: 'GET',        
+        headers: {...API.headers, ...authHeaders},
+        
+    })
+    if (!res.ok) {
+        throw new Error('Network response was not ok')
+    }
+    return await res.json()
+}
+
+export const startTrip = async (tripId: string) => {
+    const endpoint = `${API.BASE_URL}/trip/${tripId}/start-trip`
+    const authHeaders = await getAuthHeaders()
+    const res = await fetch(endpoint, {
+        method: 'POST',        
+        headers: {...API.headers, ...authHeaders},
+    })
+    if (!res.ok) {
+        throw new Error('Network response was not ok')
+    }
+    return res.status
+}
+
+export const addDriverNote = async (orderId: string, note: string, userId: string) => {
+    const endpoint = `${API.BASE_URL}/Order/${orderId}/driver-note`
+    const authHeaders = await getAuthHeaders()
+    const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: {...API.headers, ...authHeaders},
+        body: JSON.stringify({ note, userId }),
+    })
+    if (!res.ok) {
+        throw new Error('Network response was not ok')
+    }
+    return res.json()
+}
+
+
+
 
 // const getPhotos = (id: number) => {
 //     const photos: string[] = [];

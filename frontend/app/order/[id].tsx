@@ -1,5 +1,6 @@
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
+import { useRouter } from 'expo-router'
 import { useLocalSearchParams } from 'expo-router'
 import { Image, ScrollView as HorizontalScrollView } from 'react-native'
 import { Load } from '@/interfaces/Load'
@@ -14,6 +15,7 @@ const OrderDetails = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const {authState} = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -31,6 +33,32 @@ const OrderDetails = () => {
       fetchOrder()
     }
   }, [id])
+
+  const handleApply = async () => {
+    try {
+      setLoading(true)
+      await assignDriver(order?.orderId as string, authState?.userId as string)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to assign driver')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleAddNote = async () => {
+    if (!order?.orderId) return
+    router.push(`/order/${order.orderId}/add-note`)
+  }
+
+  const handleAddDocuments = async () => {
+    // TODO: implement add documents flow
+    console.log('Add Documents clicked for', order?.orderId)
+  }
+
+  const handleCompleteOrder = async () => {
+    // TODO: implement complete order API call
+    console.log('Complete Order clicked for', order?.orderId)
+  }
 
   const totalLoads = (order?.loads ? order.loads.length : 0)
   const totalWeight = (order?.loads
@@ -105,21 +133,35 @@ const OrderDetails = () => {
       </ScrollView>
 
       <View className="absolute bottom-12 w-full px-5">
-        <TouchableOpacity
-          className="bg-blue-600 rounded-xl py-3 items-center"
-          onPress={async () => {
-            try{
-              setLoading(true)
-              await assignDriver(order?.orderId as string, authState?.userId as string)
-            } catch (err) {
-              setError(err instanceof Error ? err.message : 'Failed to assign driver')
-            } finally {
-              setLoading(false)
-            }
-          }}
-        >
-          <Text className="text-white font-semibold text-base">Apply</Text>
-        </TouchableOpacity>
+        {order?.status === 0 ? (
+          <TouchableOpacity
+            className="bg-blue-600 rounded-xl py-3 items-center"
+            onPress={handleApply}
+          >
+            <Text className="text-white font-semibold text-base">Apply</Text>
+          </TouchableOpacity>
+        ) : order?.status === 2 ? (
+          <View className="flex-row justify-between space-x-3">
+            <TouchableOpacity
+              className="bg-gray-700 rounded-xl py-3 px-3 flex-1 items-center"
+              onPress={handleAddNote}
+            >
+              <Text className="text-white font-semibold text-base">Add Note</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="bg-gray-700 rounded-xl py-3 px-3 flex-1 items-center"
+              onPress={handleAddDocuments}
+            >
+              <Text className="text-white font-semibold text-base">Add Documents</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="bg-green-600 rounded-xl py-3 px-3 flex-1 items-center"
+              onPress={handleCompleteOrder}
+            >
+              <Text className="text-white font-semibold text-base">Complete Order</Text>
+            </TouchableOpacity>
+          </View>
+        ) : null}
       </View>
     </View>
   )

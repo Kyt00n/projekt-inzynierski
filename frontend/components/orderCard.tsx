@@ -10,6 +10,7 @@ const OrderCard = (props: Order) => {
     pickupLocation,
     deliveryLocation,
     status,
+    tripId,
     loads = [],
   } = props
 
@@ -47,7 +48,6 @@ const OrderCard = (props: Order) => {
       lineThrough = true
       break
     default:
-      // Created or unknown -> no border/badge
       break
   }
 
@@ -55,7 +55,7 @@ const OrderCard = (props: Order) => {
 
   return (
     <Link href={`/order/${orderId}`} asChild>
-      <TouchableOpacity className={`w-[90%] relative flex-row items-start rounded-lg p-3 bg-primary-700 ${borderClass}`}>
+      <TouchableOpacity className={`w-[90%] relative flex-row items-stretch rounded-lg p-3 bg-primary-700 ${borderClass}`}>
         {badgeMessage ? (
           <View className={`absolute right-3 top-3 px-2 py-1 rounded-full ${badgeBg}`}>
             <Text className={`text-xs ${badgeTextColor}`}>{badgeMessage}</Text>
@@ -74,8 +74,8 @@ const OrderCard = (props: Order) => {
           </Text>
         </View>
 
-        <View className="w-1/3 items-end">
-          <Text className={`text-white text-sm font-semibold mt-2 ${textDecorationClass}`} numberOfLines={1}>
+        <View className="w-1/3 items-end justify-end">
+          <Text className={`text-white text-sm font-semibold ${textDecorationClass}`} numberOfLines={1}>
             Loads: {totalLoads}
           </Text>
           <Text className={`text-gray-400 text-xs mt-1 ${textDecorationClass}`} numberOfLines={1}>

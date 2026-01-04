@@ -1,3 +1,4 @@
+import { DriverNote } from "./DriverNote";
 import { Load } from "./Load";
 
 export interface Order {
@@ -7,7 +8,8 @@ export interface Order {
     deliveryLocation: string;
     itemDescription: string;
     specialInstructions?: string;
-    driverNotes?: string;
+    driverNotes?: DriverNote[];
+    tripId: string;
     status: number;
     createdAt: string;
     updatedAt: string;

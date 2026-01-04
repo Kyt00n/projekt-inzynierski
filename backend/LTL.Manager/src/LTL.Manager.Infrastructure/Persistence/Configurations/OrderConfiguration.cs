@@ -26,6 +26,11 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
       .HasForeignKey(l => l.OrderId)
       .OnDelete(DeleteBehavior.Cascade);
     
+    builder.HasMany(o => o.DriverNotes)
+      .WithOne(l => l.Order)
+      .HasForeignKey(l => l.OrderId)
+      .OnDelete(DeleteBehavior.Cascade);
+    
     builder.HasMany(o => o.Documents)
       .WithOne(d => d.Order)
       .HasForeignKey(d => d.OrderId)

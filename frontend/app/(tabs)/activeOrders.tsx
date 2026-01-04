@@ -39,7 +39,7 @@ export default function ActiveOrders() {
             data={orders ?? []}
             keyExtractor={(item) => item.orderId}
             renderItem={renderItem}
-            contentContainerStyle={{ paddingBottom: 32, paddingTop: 20 }}
+            contentContainerStyle={{ paddingBottom: 100, paddingTop: 20 }}
             showsVerticalScrollIndicator={false}
             refreshing={loading}
             onRefresh={refetch}

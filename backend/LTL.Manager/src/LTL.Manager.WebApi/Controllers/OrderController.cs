@@ -1,5 +1,7 @@
 ﻿using LTL.Manager.Application.Interfaces;
+using LTL.Manager.Domain.Requests.DocumentRequests;
 using LTL.Manager.Domain.Requests.OrderRequests;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LTL.Manager.WebApi.Controllers;
@@ -72,6 +74,7 @@ public class OrderController : ControllerBase
   public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateStatusRequest request)
   {
     var success = await _orderService.UpdateStatusAsync(id, request.Status);
+    await _tripService.CheckTripForCompletionAsync(id);
     if (!success) return BadRequest();
     return NoContent();
   }
@@ -81,5 +84,44 @@ public class OrderController : ControllerBase
     var updated = await _orderService.UpdateOrderAsync(id, request);
     if (updated == null) return NotFound();
     return Ok(updated); 
+  }
+  [HttpPost("{id:guid}/driver-note")]
+  public async Task<IActionResult> AddDriverNote(Guid id, [FromBody] AddDriverNoteRequest request)
+  {
+    try
+    {
+      if (string.IsNullOrWhiteSpace(request.Note)) return BadRequest("Note is required.");
+      var success = await _orderService.AddDriverNoteAsync(id, request);
+      return Ok(success);
+    }
+    catch (InvalidOperationException)
+    {
+      return BadRequest();
+    }
+  }
+
+  [HttpPost("{id:guid}/documents")]
+  public async Task<IActionResult> UploadDocument(Guid id, IFormFile file)
+  {
+    try
+    {
+      if (file == null || file.Length == 0) return BadRequest("File is empty.");
+      using var ms = new MemoryStream();
+      await file.CopyToAsync(ms);
+
+      var docRequest = new CreateDocumentRequest
+      {
+        FileName = Path.GetFileName(file.FileName),
+        FileType = file.ContentType ?? "application/octet-stream",
+        FileContent = ms.ToArray()
+      };
+
+      var created = await _orderService.AddOrderDocumentAsync(id, docRequest);
+      return Ok(created);
+    } catch (InvalidOperationException)
+    {
+      return BadRequest();
+    }
+    
   }
 }

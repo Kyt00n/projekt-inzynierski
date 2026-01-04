@@ -15,6 +15,7 @@ public class OrderProfile : Profile
       .ForMember(d => d.OrderId, opt => opt.MapFrom(_ => Guid.NewGuid()))
       .ForMember(d => d.Status, opt => opt.MapFrom(_ => OrderStatus.Created))
       .ForMember(d => d.Loads, opt => opt.MapFrom(s => s.Loads))
+      .ForMember(d => d.DriverNotes, opt => opt.MapFrom(_ => new List<DriverNote>()))
       .AfterMap((src, dest, context) =>
       {
         foreach (var load in dest.Loads)
@@ -30,7 +31,8 @@ public class OrderProfile : Profile
       .ForMember(d => d.OrderId, opt => opt.Ignore()).ReverseMap();
 
     CreateMap<Order, GetOrderResponse>()
-      .ForMember(d => d.Loads, opt => opt.MapFrom(s => s.Loads.Where(l => l.OrderId == s.OrderId).ToList()));
+      .ForMember(d => d.Loads, opt => opt.MapFrom(s => s.Loads.Where(l => l.OrderId == s.OrderId).ToList()))
+      .ForMember(d => d.DriverNotes, opt => opt.MapFrom(s => s.DriverNotes.Where(n => n.OrderId == s.OrderId).ToList()));
 
     CreateMap<UpdateOrderRequest, Order>()
       .ForMember(d => d.Loads, opt =>

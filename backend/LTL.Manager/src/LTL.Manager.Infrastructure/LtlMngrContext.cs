@@ -22,5 +22,6 @@ public class LtlMngrContext : DbContext
     modelBuilder.ApplyConfiguration(new LoadConfiguration());
     modelBuilder.ApplyConfiguration(new DocumentConfiguration());
     modelBuilder.ApplyConfiguration(new TripConfiguration());
+    modelBuilder.ApplyConfiguration(new DriverNoteConfiguration());
   }
 }

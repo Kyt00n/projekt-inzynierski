@@ -15,8 +15,9 @@ public class Order : BaseEntity<int>
   
   public string Description { get; set; } = String.Empty;
   public string SpecialInstructions { get; set; } = String.Empty;
-  public string DriverNotes { get; set; } = String.Empty;
   public Trip? Trip { get; set; }
   public ICollection<Load> Loads { get; set; } = new List<Load>();
-  public ICollection<Document>? Documents { get; set; }
+  public ICollection<Document> Documents { get; set; } = new  List<Document>();
+  
+  public ICollection<DriverNote> DriverNotes { get; set; } = new List<DriverNote>();
 }
