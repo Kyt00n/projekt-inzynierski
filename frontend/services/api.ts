@@ -1,5 +1,6 @@
 import { Load } from '@/interfaces/Load';
 import { Order } from '@/interfaces/Order';
+import { User } from '@/interfaces/User';
 import * as SecureStore from 'expo-secure-store';
 
 export const API = {
@@ -65,7 +66,7 @@ export const assignDriver = async (orderId: string, driverId: string) => {
     }
     return true
 }
-export const updateOrderStatus = async (orderId: string, status: string) => {
+export const updateOrderStatus = async (orderId: string, status: number) => {
     const endpoint = `${API.BASE_URL}/Order/${orderId}/status`
     const authHeaders = await getAuthHeaders()
     const res = await fetch(endpoint, {
@@ -172,101 +173,46 @@ export const addDriverNote = async (orderId: string, note: string, userId: strin
     return res.json()
 }
 
+export const uploadOrderDocument = async (
+    orderId: string,
+    file: { uri: string; name?: string; type?: string }
+) => {
+    const endpoint = `${API.BASE_URL}/Order/${orderId}/documents`
+    const authHeaders = await getAuthHeaders()
+    const formData = new FormData()
+    formData.append('file', {
+        uri: file.uri,
+        name: file.name ?? 'file',
+        type: file.type ?? 'application/octet-stream',
+    } as any)
 
+    const headers = {
+        // Let fetch set the Content-Type with boundary for multipart/form-data
+        Accept: 'application/json',
+        ...authHeaders,
+    }
 
+    const res = await fetch(endpoint, {
+        method: 'POST',
+        headers,
+        body: formData,
+    })
 
-// const getPhotos = (id: number) => {
-//     const photos: string[] = [];
-//     for (let i = 0; i < 6; i++) {
-//         photos.push(`https://picsum.photos/id/${id + (5 * i)}/200/300`);
-//     }
-//     return photos;
-// };
-// export const getPosts = async ({query}: {query: string}) => {
-//     const endpoint = query ?
-//      `${JsonPlaceholderAPI.BASE_URL}/posts?title_like=${query}` :
-//       `${JsonPlaceholderAPI.BASE_URL}/posts`
+    if (!res.ok) {
+        throw new Error('Network response was not ok')
+    }
+    return await res.json()
+}
 
-//     const response = await fetch(endpoint, {
-//         method: 'GET',
-//         headers: JsonPlaceholderAPI.headers,
-//     })
-//     if (!response.ok) {
-//         throw new Error('Network response was not ok')
-//     }
-//     const posts = await response.json()
-//     const postsWithThumbnails = posts.map((post: any) => {
-//         const thumbnailUrl = `https://picsum.photos/id/${post.id}/200/300`;
-//         return { ...post, thumbnailUrl };
-//     });
-    
-
-//     return postsWithThumbnails;
-// }
-
-// export const getPostById = async (id: string) => {
-//     const endpoint = `${JsonPlaceholderAPI.BASE_URL}/posts/${id}`
-
-//     const response = await fetch(endpoint, {
-//         method: 'GET',
-//         headers: JsonPlaceholderAPI.headers,
-//     })
-//     if (!response.ok) {
-//         throw new Error('Network response was not ok')
-//     }
-//     const post = await response.json()
-//     const thumbnailUrl = `https://picsum.photos/id/${post.id}/200/300`;
-//     const photos = getPhotos(post.id);
-//     const postWithThumbnail = { ...post, thumbnailUrl, photos };
-//     return postWithThumbnail
-// }
-
-// export const getUserById = async (id: string) => {
-//     const endpoint = `${JsonPlaceholderAPI.BASE_URL}/users/${id}`
-
-//     const response = await fetch(endpoint, {
-//         method: 'GET',
-//         headers: JsonPlaceholderAPI.headers,
-//     })
-//     if (!response.ok) {
-//         throw new Error('Network response was not ok')
-//     }
-//     const user = await response.json()
-//     return user
-// }
-
-// export const getPhotosByPost = async ({postId, photoId}: {postId:number, photoId?: number}) => {
-//     const endpoint = photoId ?
-//      `${JsonPlaceholderAPI.BASE_URL}/posts/${postId}/photos?id=${photoId}` :
-//       `${JsonPlaceholderAPI.BASE_URL}/posts/${postId}/photos`
-
-//     const response = await fetch(endpoint, {
-//         method: 'GET',
-//         headers: JsonPlaceholderAPI.headers,
-//     })
-//     if (!response.ok) {
-//         throw new Error('Network response was not ok')
-//     }
-//     const data = await response.json()
-//     return data
-// }
-// export const getSavedPosts = async ({userId}: {userId: string}) => {
-//     const endpoint = `${JsonPlaceholderAPI.BASE_URL}/users/${userId}/posts`
-
-//     const response = await fetch(endpoint, {
-//         method: 'GET',
-//         headers: JsonPlaceholderAPI.headers,
-//     })
-//     if (!response.ok) {
-//         throw new Error('Network response was not ok')
-//     }
-//     const posts = await response.json()
-//     const postsWithThumbnails = posts.map((post: any) => {
-//         const thumbnailUrl = `https://picsum.photos/id/${post.id}/200/300`;
-//         return { ...post, thumbnailUrl };
-//     });
-    
-
-//     return postsWithThumbnails;
-// }
-
+export const getUser = async (): Promise<User> => {
+    const endpoint = `${API.BASE_URL}/user/me`
+    const authHeaders = await getAuthHeaders()
+    const res = await fetch(endpoint, {
+        method: 'GET',
+        headers: {...API.headers, ...authHeaders},
+    })
+    if (!res.ok) {
+        throw new Error('Network response was not ok')
+    }
+    return await res.json()
+}

@@ -1,10 +1,13 @@
-import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'expo-router'
 import { useLocalSearchParams } from 'expo-router'
 import { Image, ScrollView as HorizontalScrollView } from 'react-native'
+import * as ImagePicker from 'expo-image-picker'
+import * as DocumentPicker from 'expo-document-picker'
+import { uploadOrderDocument } from '@/services/api'
 import { Load } from '@/interfaces/Load'
-import { assignDriver, getOrder } from '@/services/api'
+import { assignDriver, getOrder, updateOrderStatus } from '@/services/api'
 import { Order } from '@/interfaces/Order'
 import { useAuth } from '../authProvider'
 
@@ -51,13 +54,73 @@ const OrderDetails = () => {
   }
 
   const handleAddDocuments = async () => {
-    // TODO: implement add documents flow
-    console.log('Add Documents clicked for', order?.orderId)
+    if (!order?.orderId) return
+
+    const takePhoto = async () => {
+      try {
+        setLoading(true)
+        const camPerm = await ImagePicker.requestCameraPermissionsAsync()
+        if (camPerm.status !== 'granted') {
+          Alert.alert('Permission required', 'Camera permission is required to take a photo')
+          return
+        }
+        const res = await ImagePicker.launchCameraAsync({ allowsEditing: false, quality: 0.8 })
+        if (res.canceled) return
+        console.log(res.assets[0])
+        const file = { uri: res.assets[0].uri, name: res.assets[0].uri.split('/').pop() ?? 'photo.jpg', type: 'image/jpeg' }
+        await uploadOrderDocument(order.orderId as string, file)
+        Alert.alert('Success', 'Document uploaded')
+      } catch (err) {
+        Alert.alert('Upload failed', err instanceof Error ? err.message : 'Unknown error')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    const chooseFile = async () => {
+      try {
+        setLoading(true)
+        const camPerm = await ImagePicker.requestMediaLibraryPermissionsAsync()
+        if (camPerm.status !== 'granted') {
+          Alert.alert('Permission required', 'Camera permission is required to take a photo')
+          return
+        }
+        const res = await ImagePicker.launchImageLibraryAsync({ allowsEditing: false, quality: 0.8, allowsMultipleSelection: true })
+        if (res.canceled) return
+        for (const asset of res.assets) {
+          console.log('Uploading asset', asset)
+          const file = { uri: asset.uri, name: asset.uri.split('/').pop() ?? 'photo.jpg', type: 'image/jpeg' }
+          await uploadOrderDocument(order.orderId as string, file)
+        }
+        Alert.alert('Success', `Uploaded ${res.assets.length} file${res.assets.length > 1 ? 's' : ''}`)
+      } catch (err) {
+        Alert.alert('Upload failed', err instanceof Error ? err.message : 'Unknown error')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    Alert.alert('Add document', 'Choose source', [
+      { text: 'Take Photo', onPress: () => void takePhoto() },
+      { text: 'Choose File', onPress: () => void chooseFile() },
+      { text: 'Cancel', style: 'cancel' },
+    ])
   }
 
   const handleCompleteOrder = async () => {
-    // TODO: implement complete order API call
-    console.log('Complete Order clicked for', order?.orderId)
+    if (!order?.orderId) return
+    try {
+      setLoading(true)
+      await updateOrderStatus(order.orderId as string, 3)
+      Alert.alert('Success', 'Order marked as completed')
+      const refreshed = await getOrder(order.orderId as string)
+      setOrder(refreshed)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to complete order')
+      Alert.alert('Error', err instanceof Error ? err.message : 'Failed to complete order')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const totalLoads = (order?.loads ? order.loads.length : 0)
