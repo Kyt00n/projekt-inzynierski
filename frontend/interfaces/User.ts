@@ -5,10 +5,4 @@ export interface User {
     email: string;
     isActive: boolean;
     phone: string;
-    website: string;
-    company: {
-        name: string;
-        catchPhrase: string;
-        bs: string;
-    };
 }

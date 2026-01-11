@@ -9,6 +9,7 @@ public class User : BaseEntity<int>
   public string Name { get; init; } = String.Empty;
   public string Surname { get; init; } = String.Empty;
   public string Email { get; init; } = String.Empty;
+  public string PhoneNumber { get; init; } = String.Empty;
   public string PasswordHash { get; init; } = String.Empty;
   public bool IsActive { get; init; }
   public bool IsAdmin { get; init; }

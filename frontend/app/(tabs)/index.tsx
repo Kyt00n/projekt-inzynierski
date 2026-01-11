@@ -1,10 +1,8 @@
 import React, { useMemo } from "react";
-import SearchBar from "@/components/searchBar";
 import { ActivityIndicator, FlatList, ScrollView, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import useFetch from "@/services/useFetch";
 import { getUserOrders } from "@/services/api";
-import PostCard from "@/components/postCard";
 import { Order } from "@/interfaces/Order";
 import { useAuth } from "../authProvider";
 import OrderCard from "@/components/orderCard";

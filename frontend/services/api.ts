@@ -99,6 +99,7 @@ export const registerUser = async (payload: {
     name: string
     surname: string
     email: string
+    phone: string
     password: string
 }) => {
     const endpoint = `${API.BASE_URL}/user`
